@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facture Globale {{ facture_globale.id }}</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 30px; 
+            background-color: #f8f9fa; 
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #003366;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .company-info {
+            font-size: 14px;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        .company-info img {
+            max-width: 150px;
+        }
+
+        .facture-title {
+            text-align: right;
+            color: #003366;
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        .details-table, .articles-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .details-table th, .details-table td,
+        .articles-table th, .articles-table td {
+            border: 1px solid #dee2e6;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .details-table th {
+            background-color: #f1f1f1;
+        }
+
+        .articles-table th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .summary {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e9ecef;
+            font-weight: bold;
+            font-size: 16px;
+            border-radius: 5px;
+            width: 50%;
+        }
+
+        .summary p {
+            margin: 5px 0;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #2a4d6e;
+            font-size: 12px;
+        }
+
+        .footer p {
+            margin: 3px 0;
+        }
+
+        .client-name {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .facture-header {
+            background-color: #f1f1f1;
+            font-weight: bold;
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="company-info">
+            <img src="{% static 'images/logo2.jpg' %}" alt="Logo">
+            <h3>AP2S Concepts</h3>
+            <p><strong>NINEA : 009306706 2C2</strong></p>
+            <p><strong>Adresse : Rue 12 Angle Bourguiba</strong></p>
+            <p><strong>Tél : +221 78 308 03 36 / 33 858 69 73</strong></p>
+
+        </div>
+        <div class="facture-title">
+            <h2>Facture Globale</h2>
+            <p>Dakar, le {{ facture_globale.date_creation|date:"d/m/Y" }}</p>
+        </div>
+    </div>
+
+    <!-- Informations sur la facture globale -->
+    <table class="table details-table">
+        <tr><th>Client :</th><td class="client-name">{{ client_nom }}</td></tr>
+        <tr><th>Factures incluses :</th><td>
+            {% for facture in facture_globale.factures.all %}
+                {{ facture.numero }}{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        </td></tr>
+    </table>
+
+    <!-- Tableau des articles pour chaque facture -->
+    <table class="table articles-table">
+        <thead>
+            <tr class="facture-header">
+                <th>Facture</th>
+                <th>QTE</th>
+                <th>DÉSIGNATION</th>
+                <th>P.U HT</th>
+                <th>TOTAL HT</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for facture in facture_globale.factures.all %}
+                <!-- En-tête spécifique pour chaque facture -->
+                <tr style="background-color: #f0f0f0;">
+                    <td colspan="5" class="text-center"><strong>Facture {{ facture.numero }}</strong></td>
+                </tr>
+
+                {% for article in facture.articles.all %}
+                <tr>
+                    <td></td> <!-- Colonne vide pour ne pas répéter le numéro de facture -->
+                    <td>{{ article.quantite }}</td>
+                    <td>{{ article.designation }}</td>
+                    <td>{{ article.prix_unitaire }}</td>
+                    <td>{{ article.total_ht }}</td>
+                </tr>
+                {% endfor %}
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Résumé des totaux -->
+    <div class="summary">
+        <p><strong>Total Général HT :</strong> {{ total_general_ht }} CFA</p>
+        <p style="color:red;"><strong>TVA :</strong> {{ total_tva }} CFA</p>
+        <p><strong>Total Général TTC :</strong> {{ total_general_ttc }} CFA</p>
+    </div>
+    <div class="total-section">
+        <p>Arrêté la somme de <strong style="color:red;">{{ total_ttc_en_lettres }}</strong></p>
+        <p>Paiement par chèque ou virement</p>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>Adresse : Rue 12 Angle Bourguiba | Tél : 78 308 03 36</p>
+        <p>Email : ap2sconcepts@gmail.com</p>
+    </div>
+
+</body>
+</html>

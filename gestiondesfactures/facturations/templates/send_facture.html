@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Envoi de la Facture par Email</h2>
+    
+    <div class="card p-4 shadow-sm">
+        <h5 class="text-center mb-3">Facture N° {{ facture.numero }}</h5>
+
+        <p>La facture a été envoyée avec succès à l'adresse email de <strong>{{ facture.client.email }}</strong>.</p>
+
+        <div class="alert alert-info mt-3">
+            L'email contient tous les détails de la facture, y compris le montant total et la TVA.
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="{% url 'facture_detail' facture.id %}" class="btn btn-success btn-lg">Retour à la facture</a>
+            <a href="{% url 'facture_resend_email' facture.id %}" class="btn btn-warning btn-lg ml-3">Renvoi de l'email</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

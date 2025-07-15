@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="d-flex justify-content-center mb-4">
+        <h2 class="fw-bold text-danger">
+            ⚠️ Confirmation de Suppression
+        </h2>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card p-4 shadow-lg border-danger">
+                <div class="alert alert-warning text-center">
+                    <i class="fas fa-exclamation-triangle fa-2x text-danger"></i>
+                    <p class="mt-3 mb-0 fw-bold">
+                        Êtes-vous sûr de vouloir supprimer cette facture ?
+                    </p>
+                    <p class="mb-0">
+                        <strong>Facture N° {{ facture.numero }}</strong> - Client : <strong>{{ facture.client.nom }}</strong>
+                    </p>
+                </div>
+
+                <div class="text-center mt-4">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-lg px-4">
+                            <i class="fas fa-trash-alt"></i> Supprimer
+                        </button>
+                        <a href="{% url 'facture_detail' facture.id %}" class="btn btn-outline-secondary btn-lg px-4 ms-3">
+                            <i class="fas fa-times-circle"></i> Annuler
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

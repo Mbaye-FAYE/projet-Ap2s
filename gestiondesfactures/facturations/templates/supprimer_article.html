@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Supprimer l'Article de la Facture N° {{ article.facture.numero }}</h2>
+
+    <div class="card p-4 shadow-sm">
+        <h5 class="text-center mb-3">Détails de l'Article</h5>
+
+        <p><strong>Désignation :</strong> {{ article.designation }}</p>
+        <p><strong>Quantité :</strong> {{ article.quantite }}</p>
+        <p><strong>Prix Unitaire :</strong> {{ article.prix_unitaire }} €</p>
+        <p><strong>Total HT :</strong> {{ article.total_ht }} €</p>
+
+        <hr>
+        
+        <h6 class="text-center mb-3">Êtes-vous sûr de vouloir supprimer cet article de la facture ?</h6>
+
+        <div class="alert alert-warning text-center">
+            <strong>Attention !</strong> Cette action est irréversible.
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-danger btn-lg">Supprimer cet Article</button>
+                <a href="{% url 'facture_detail' article.facture.id %}" class="btn btn-secondary btn-lg ml-3">Annuler</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

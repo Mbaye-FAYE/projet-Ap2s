@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="fw-bold text-primary text-center mb-4">Résumé des Factures Globales</h1>
+
+    <form method="POST" action="{% url 'create_facture_globale' %}">
+        {% csrf_token %}
+
+        <!-- Input caché pour stocker les factures sélectionnées -->
+        <div id="facture_ids" class="d-none">
+            {% for facture in factures %}
+                <input type="hidden" name="factures" value="{{ facture.id }}">
+            {% endfor %}
+        </div>
+
+        <!-- Barre de recherche pour filtrer les factures -->
+        <div class="mb-4">
+            <input type="text" class="form-control" id="searchInput" placeholder="Rechercher une facture..." onkeyup="searchFactures()">
+        </div>
+
+        <!-- Tableau avec les factures -->
+        <table class="table table-striped table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Numéro</th>
+                    <th>Client</th>
+                    <th>Date</th>
+                    <th>Total TTC</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="facturesTable">{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="fw-bold text-primary text-center">Créer Facture Globale</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="client">Sélectionner le client :</label>
+            <select name="client_id" id="client" class="form-control">
+                {% for client in clients %}
+                    <option value="{{ client.id }}">{{ client.nom }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group mt-4">
+            <label for="factures">Sélectionner les factures :</label>
+            <select name="factures" id="factures" class="form-control" multiple>
+                {% for facture in factures %}
+                    <option value="{{ facture.id }}">{{ facture.numero }} - {{ facture.client.nom }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-4">Créer Facture Globale</button>
+    </form>
+</div>
+{% endblock %}
+
+                {% for facture in factures %}
+                <tr data-total-ht="{{ facture.total_ht }}" data-total-tva="{{ facture.total_tva }}" data-total-ttc="{{ facture.total_ttc }}">
+                    <td>{{ facture.numero }}</td>
+                    <td>{{ facture.client.nom }}</td>
+                    <td>{{ facture.date_emission }}</td>
+                    <td>{{ facture.total_ttc }} FCFA</td>
+                    <td>
+                        <!-- Bouton prévisualiser -->
+                        <a href="{% url 'facture_detail' facture_id=facture.id %}" class="btn btn-outline-info btn-sm" title="Prévisualiser">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <!-- Bouton retirer -->
+                        <button type="button" class="btn btn-outline-danger btn-sm remove-facture" data-id="{{ facture.id }}" title="Retirer de la facture globale">
+                            <i class="fas fa-minus-circle"></i>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <nav>
+            <ul class="pagination justify-content-center">
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Précédent" id="previousPage">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item active">
+                    <span class="page-link" id="currentPage">1</span>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Suivant" id="nextPage">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="row mt-4">
+            <div class="col-md-4 offset-md-8">
+                <div class="total-summary p-4 border rounded shadow-sm">
+                    <h5 class="text-center text-primary">Résumé des Totaux</h5>
+                    <hr>
+                    <p><strong>Total HT :</strong> <span id="total_ht">{{ total_general_ht }}</span> FCFA</p>
+                    <p><strong>Total TVA :</strong> <span id="total_tva">{{ total_general_tva }}</span> FCFA</p>
+                    <p><strong>Total TTC :</strong> <span id="total_ttc">{{ total_general_ttc }}</span> FCFA</p>
+                    <button type="submit" class="btn btn-primary w-100 mt-3">Créer la Facture Globale</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    {% if facture_globale %}
+        <!-- Bouton pour télécharger la facture globale en PDF -->
+        <a href="{% url 'generate_facture_globale_pdf' facture_id=facture_globale.id %}" class="btn btn-outline-success mt-3 w-100">
+            <i class="fas fa-file-pdf"></i> Télécharger la Facture Globale en PDF
+        </a>
+    {% endif %}
+</div>
+
+<script>
+    let currentPage = 1;
+    const rowsPerPage = 10; // Changez cela si nécessaire
+    let totalHT = 0;
+    let totalTVA = 0;
+    let totalTTC = 0;
+
+    // Mettre à jour la page en fonction de la pagination
+    function paginate() {
+        const rows = document.querySelectorAll('#facturesTable tr');
+        const totalRows = rows.length;
+        const totalPages = Math.ceil(totalRows / rowsPerPage);
+
+        // Masquer toutes les lignes
+        rows.forEach((row, index) => {
+            if (index >= (currentPage - 1) * rowsPerPage && index < currentPage * rowsPerPage) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // Mettre à jour la pagination
+        document.getElementById('currentPage').textContent = currentPage;
+        document.getElementById('previousPage').parentElement.classList.toggle('disabled', currentPage === 1);
+        document.getElementById('nextPage').parentElement.classList.toggle('disabled', currentPage === totalPages);
+    }
+
+    // Passer à la page suivante
+    document.getElementById('nextPage').addEventListener('click', function() {
+        currentPage++;
+        paginate();
+    });
+
+    // Passer à la page précédente
+    document.getElementById('previousPage').addEventListener('click', function() {
+        currentPage--;
+        paginate();
+    });
+
+    // Recherche dans les factures
+    function searchFactures() {
+        const filter = document.getElementById('searchInput').value.toUpperCase();
+        const rows = document.querySelectorAll('#facturesTable tr');
+        
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            const factureNumero = cells[0].textContent.toUpperCase();
+            const factureClient = cells[1].textContent.toUpperCase();
+            const factureDate = cells[2].textContent.toUpperCase();
+
+            if (factureNumero.includes(filter) || factureClient.includes(filter) || factureDate.includes(filter)

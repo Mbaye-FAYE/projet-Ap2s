@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="fw-bold text-primary text-center">Détails de la Facture Globale</h1>
+
+    <p><strong>Client :</strong> {{ facture_globale.client.nom }}</p>
+    <p><strong>Date de création :</strong> {{ facture_globale.date_creation }}</p>
+    <p><strong>Total HT :</strong> {{ facture_globale.total_ht }} FCFA</p>
+    <p><strong>TVA :</strong> {{ facture_globale.tva }} FCFA</p>
+    <p><strong>Total TTC :</strong> {{ facture_globale.total_ttc }} FCFA</p>
+
+    <h3 class="mt-4">Factures Incluses</h3>
+    <ul>
+        {% for facture in facture_globale.factures.all %}
+            <li>Facture {{ facture.numero }} - {{ facture.total_ttc }} FCFA</li>
+        {% endfor %}
+    </ul>
+
+    <div class="mt-4 text-center">
+        <a href="{% url 'generate_pdf_facture_globale' facture_globale.id %}" class="btn btn-success" target="_blank">Télécharger en PDF</a>
+        <a href="{% url 'index' %}" class="btn btn-secondary">Retour</a>
+    </div>
+</div>
+{% endblock %}

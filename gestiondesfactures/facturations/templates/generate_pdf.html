@@ -1,0 +1,21 @@
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from django.shortcuts import get_object_or_404
+from weasyprint import HTML
+
+def generate_pdf(request, facture_id):
+    # Récupérer la facture avec l'ID donné, ou afficher une erreur 404 si non trouvée
+    facture = get_object_or_404(Facture, id=facture_id)
+    
+    # Générer le contenu HTML à partir du template facture_pdf.html
+    html_content = render_to_string('facture_pdf.html', {'facture': facture})
+    
+    # Générer le fichier PDF à partir du HTML
+    pdf = HTML(string=html_content).write_pdf()
+
+    # Créer une réponse HTTP avec le PDF en pièce jointe
+    response = HttpResponse(pdf, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="facture_{facture.numero}.pdf"'
+
+    # Retourner la réponse pour le téléchargement du fichier PDF
+    return response

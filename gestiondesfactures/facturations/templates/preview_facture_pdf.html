@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center">Prévisualisation de la Facture</h2>
+    
+    <div class="card p-4">
+        <h4 class="text-center">Facture N° {{ facture.numero }}</h4>
+        <hr>
+        
+        <p><strong>Nom du client :</strong> {{ facture.client.nom }}</p>
+        <p><strong>Date d'émission :</strong> {{ facture.date_emission|date:"d-m-Y" }}</p> <!-- Format de la date -->
+        
+        <p><strong>Total HT :</strong> {{ facture.total_ht|floatformat:2 }} €</p> <!-- Format monétaire -->
+        <p><strong>TVA :</strong> {{ facture.tva|floatformat:2 }} %</p> <!-- Format monétaire -->
+        <p><strong>Total TTC :</strong> {{ facture.total_ttc|floatformat:2 }} €</p> <!-- Format monétaire -->
+        
+        <hr>
+        <a href="{% url 'generate_pdf' facture.id %}" class="btn btn-primary btn-block">Télécharger en PDF</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="d-flex justify-content-center mb-4">
+        <h2 class="fw-bold text-primary">🛒 Ajouter un Article à la Facture N° {{ facture.numero }}</h2>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card p-4 shadow-lg">
+                <h5 class="text-center text-secondary mb-4">📌 Détails de l'Article</h5>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="id_designation" class="form-label fw-bold">Désignation</label>
+                        {{ form.designation }}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="id_quantite" class="form-label fw-bold">Quantité</label>
+                            {{ form.quantite }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="id_prix_unitaire" class="form-label fw-bold">Prix Unitaire (FCFA)</label>
+                            {{ form.prix_unitaire }}
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-success btn-lg px-4">
+                            <i class="fas fa-check-circle"></i> Ajouter l'Article
+                        </button>
+                        <a href="{% url 'facture_detail' facture.id %}" class="btn btn-outline-danger btn-lg px-4 ms-3">
+                            <i class="fas fa-times-circle"></i> Annuler
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

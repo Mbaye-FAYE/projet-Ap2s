@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold text-primary">
+            🧾 Facture N° {{ facture.numero }}
+        </h2>
+    </div>
+
+    <!-- Informations du Client -->
+    <div class="card shadow-sm border-primary p-4 mb-4">
+        <h4 class="text-primary"><i class="fas fa-user"></i> Informations du Client</h4>
+        <p><strong>Code Client :</strong> {{ facture.client.code_client|default:"Non renseigné" }}</p>
+        <p><strong>Nom :</strong> {{ facture.client.nom|default:"Non renseigné" }}</p>
+        <p><strong>Numéro de Commande :</strong> {{ facture.numero_commande|default:"Non renseigné" }}</p>
+        <p><strong>Livraison :</strong> {{ facture.livraison|default:"Non renseigné" }}</p>
+        <p><strong>Date d'Émission :</strong> {{ facture.date_emission }}</p>
+    </div>
+
+    <!-- Détails des Articles -->
+    <div class="card shadow-sm border-info p-4 mb-4">
+        <h4 class="text-info"><i class="fas fa-box"></i> Détails des Articles</h4>
+        <table class="table table-hover text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>Désignation</th>
+                    <th>Quantité</th>
+                    <th>Prix Unitaire (FCFA)</th>
+                    <th>Total HT (FCFA)</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for article in articles %}
+                <tr>
+                    <td>{{ article.designation }}</td>
+                    <td>{{ article.quantite }}</td>
+                    <td>{{ article.prix_unitaire }} FCFA</td>
+                    <td>{{ article.total_ht }} FCFA</td>
+                    <td>
+                        <a href="{% url 'supprimer_article' facture.id article.id %}" class="btn btn-outline-danger btn-sm">
+                            <i class="fas fa-trash-alt"></i> Supprimer
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-muted">Aucun article ajouté.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Totaux de la Facture -->
+    <div class="card shadow-sm border-success p-4 mb-4">
+        <h4 class="text-success"><i class="fas fa-receipt"></i> Totaux</h4>
+        <p><strong>Total HT :</strong> {{ facture.total_ht }} FCFA</p>
+        <p><strong>TVA (18%) :</strong> {{ facture.tva }} FCFA</p>
+        <p class="fw-bold"><strong>Total TTC :</strong> {{ facture.total_ttc }} FCFA</p>
+    </div>
+
+    <!-- Actions -->
+    <div class="text-center mt-4">
+        <a href="{% url 'generate_pdf' facture_id=facture.id %}" class="btn btn-outline-success btn-lg mx-2" target="_blank">
+            <i class="fas fa-file-pdf"></i> Télécharger PDF
+        </a>
+        <a href="{% url 'facture_update' facture.id %}" class="btn btn-outline-warning btn-lg mx-2">
+            <i class="fas fa-edit"></i> Modifier
+        </a>
+        <a href="{% url 'ajouter_article' facture.id %}" class="btn btn-outline-primary btn-lg mx-2">
+            <i class="fas fa-plus-circle"></i> Ajouter Article
+        </a>
+        <a href="{% url 'facture_delete' facture.id %}" class="btn btn-outline-danger btn-lg mx-2">
+            <i class="fas fa-trash-alt"></i> Supprimer
+        </a>
+        <a href="{% url 'index' %}" class="btn btn-secondary btn-lg mx-2">
+            <i class="fas fa-arrow-left"></i> Retour
+        </a>
+    </div>
+</div>
+{% endblock %}

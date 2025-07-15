@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center">Créer / Modifier une Facture</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        
+        <!-- Formulaire Facture -->
+        <div class="card p-3 mb-3">
+            <h5>Informations Facture</h5>
+            <div class="form-group">
+                <label for="{{ form.numero.id_for_label }}">Numéro de Facture</label>
+                {{ form.numero }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.date_emission.id_for_label }}">Date d'emission</label>
+                {{ form.date_emission }}
+            </div>
+
+            <h5>Informations Client</h5>
+            <div class="card p-3 mb-3">
+                {{ client_form.as_p }} <!-- Formulaire Client -->
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.numero_commande.id_for_label }}">Numéro de Commande</label>
+                {{ form.numero_commande }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.livraison.id_for_label }}">Livraison</label>
+                {{ form.livraison }}
+            </div>
+        </div>
+
+        <!-- Détails des Articles -->
+        <div class="card p-3 mb-3">
+            <h5>Détails des Articles</h5>
+            {{ formset.management_form }}
+            <div id="articles">
+                {% for form in formset %}
+                    {% if form.instance.pk %}
+                        <div class="article-form border p-3 mb-2" data-form-index="{{ forloop.counter0 }}">
+                            {{ form.as_p }}
+                            <button type="button" class="btn btn-danger remove-article">Supprimer</button>
+                            <input type="hidden" name="{{ form.prefix }}-DELETE" value="false">
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <button type="button" id="add-article" class="btn btn-secondary">Ajouter un article</button>
+            
+        </div>
+
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary btn-lg">Enregistrer</button>
+            <a href="{% url 'index' %}" class="btn btn-secondary btn-lg ml-3">Annuler</a>
+        </div>
+    </form>
+</div>
+
+<!-- Template pour un nouvel article vierge -->
+<div id="article-template" class="article-form border p-3 mb-2" style="display: none;">
+    {{ formset.empty_form.as_p }}
+    <button type="button" class="btn btn-danger remove-article">Supprimer</button>
+    <input type="hidden" name="DELETE" value="false">
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const formsetPrefix = "{{ formset.prefix }}";
+        const totalForms = document.getElementById("id_" + formsetPrefix + "-TOTAL_FORMS");
+
+        // Fonction pour ajouter un nouvel article
+        document.getElementById("add-article").addEventListener("click", function() {
+            let formIndex = totalForms.value;
+            let newForm = document.getElementById("article-template").cloneNode(true);
+
+            // Rendre visible le formulaire cloné
+            newForm.style.display = 'block';
+
+            // Mettre à jour l'index du formulaire cloné
+            newForm.innerHTML = newForm.innerHTML.replace(/-0-/g, `-${formIndex}-`);
+
+            // Ajouter un bouton de suppression
+            const removeButton = newForm.querySelector(".remove-article");
+            removeButton.addEventListener("click", function() {
+                newForm.remove();
+                totalForms.value = parseInt(totalForms.value) - 1;
+            });
+
+            document.getElementById("articles").appendChild(newForm);
+            totalForms.value = parseInt(totalForms.value) + 1;
+        });
+
+        // Gestion de la suppression des articles
+        document.querySelectorAll(".remove-article").forEach(button => {
+            button.addEventListener("click", function() {
+                const articleForm = button.parentElement;
+                const hiddenDeleteInput = articleForm.querySelector("input[type='hidden']");
+                hiddenDeleteInput.value = "true"; // Marquer pour suppression
+                articleForm.style.display = "none"; // Masquer le formulaire
+            });
+        });
+    });
+</script>
+
+{% endblock %}

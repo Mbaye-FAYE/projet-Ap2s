@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="fw-bold text-primary text-center mb-4">Sélectionner les Factures à Grouper</h1>
+
+    {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" action="{% url 'select_factures_globale' %}">
+        {% csrf_token %}
+
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Sélection</th>
+                        <th>Numéro</th>
+                        <th>Client</th>
+                        <th>Date</th>
+                        <th>Total TTC</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for facture in factures %}
+                    <tr>
+                        <td><input type="checkbox" name="factures" value="{{ facture.id }}"></td>
+                        <td>{{ facture.numero }}</td>
+                        <td>{{ facture.client.nom }}</td>
+                        <td>{{ facture.date_emission }}</td>
+                        <td>{{ facture.total_ttc }} FCFA</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">Aucune facture disponible.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-4 text-center">
+            <button type="submit" class="btn btn-primary">Créer la Facture Globale</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
