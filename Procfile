@@ -1,1 +1,1 @@
-web: gunicorn gestiondesfactures.gestiondesfactures.wsgi
+web: gunicorn gestiondesfactures.gestiondesfactures.wsgi:application
