@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'facturations',  # Ajout de notre application
+    'gestiondesfactures.facturations',  # Ajout de notre application
     'rest_framework',
 ]
 
