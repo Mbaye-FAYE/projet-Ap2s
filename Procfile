@@ -1,1 +1,1 @@
-web: gunicorn gestiondesfactures.wsgi
+web: gunicorn Ap2sfact.wsgi
