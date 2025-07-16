@@ -91,16 +91,25 @@ WSGI_APPLICATION = 'gestiondesfactures.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql',
+#        'NAME': 'postgres',  # Remplace par le nom de ta base de données
+#        'USER': 'postgres',  # Ton utilisateur PostgreSQL
+#        'PASSWORD': 'passer',  # Ton mot de passe PostgreSQL
+#        'HOST': 'localhost',  # Adresse du serveur PostgreSQL
+#        'PORT': '5432',  # Port PostgreSQL (par défaut 5432)
+#    }
+#}
+
+import dj_database_url
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',  # Remplace par le nom de ta base de données
-        'USER': 'postgres',  # Ton utilisateur PostgreSQL
-        'PASSWORD': 'passer',  # Ton mot de passe PostgreSQL
-        'HOST': 'localhost',  # Adresse du serveur PostgreSQL
-        'PORT': '5432',  # Port PostgreSQL (par défaut 5432)
-    }
+    'default': dj_database_url.config(
+        default='postgres://USER:PASSWORD@HOST:PORT/DBNAME'
+    )
 }
+
 
 
 
