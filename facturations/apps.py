@@ -2,7 +2,7 @@ from django.apps import AppConfig
 
 class FacturationsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'gestiondesfactures.facturations'
+    name = 'facturations'
 
     def ready(self):
         from . import signaux
