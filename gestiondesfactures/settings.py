@@ -25,9 +25,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-y0@j%8xvqrzf-88$5nnlh9*^o+_rq=4bzp=nre&mn7q#m(r6x7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'projet-ap2s-2.onrender.com']
+
+ALLOWED_HOSTS = ['.onrender.com', 'localhost', '127.0.0.1']
+
 
 
 # Application definition
@@ -106,7 +108,7 @@ import dj_database_url
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgres://USER:PASSWORD@HOST:PORT/DBNAME'
+        default='postgresql://postgres_ygtm_user:vWc1zJlBrYVhIgsz1GKoofddGUk9gSdQ@dpg-d1rotbh5pdvs73ecvne0-a.oregon-postgres.render.com/postgres_ygtm'
     )
 }
 
@@ -151,7 +153,11 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),  # Répertoire static global du projet
+
+    
 ]
+
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
