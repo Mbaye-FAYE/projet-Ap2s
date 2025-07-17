@@ -5,4 +5,5 @@ class FacturationsConfig(AppConfig):
     name = 'gestiondesfactures.facturations'
 
     def ready(self):
-        import facturations.signals
+        from . import signaux
+
