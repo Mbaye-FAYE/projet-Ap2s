@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 
+import env.Include
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,13 +26,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-y0@j%8xvqrzf-88$5nnlh9*^o+_rq=4bzp=nre&mn7q#m(r6x7'
 
+import environ
+env = environ.Env()
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-
-ALLOWED_HOSTS = ['.onrender.com', 'localhost', '127.0.0.1']
-
-
+SECRET_KEY =  env('SECRET_KEY', default='django-insecure-!mw!39#0)+2dh$w=wo6vwxdufj4sv4ucnc7k+3^#f0uzl6dork')
+DEBUG = env.bool ('DEBUG', default=True)   
+ALLOWED_HOSTS = env.list ('ALLOWED_HOSTS')
 
 # Application definition
 
@@ -54,6 +59,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Middleware pour servir les fichiers statiques
 ]
 
 ROOT_URLCONF = 'gestiondesfactures.urls'
@@ -107,9 +113,8 @@ WSGI_APPLICATION = 'gestiondesfactures.wsgi.application'
 import dj_database_url
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default='postgresql://postgres_ygtm_user:vWc1zJlBrYVhIgsz1GKoofddGUk9gSdQ@dpg-d1rotbh5pdvs73ecvne0-a.oregon-postgres.render.com/postgres_ygtm'
-    )
+    'default': dj_database_url.parse(env('DATABASE_URL'), conn_max_age=600, ssl_require=True)  # Utilise la variable d'environnement DATABASE_URL
+    
 }
 
 
@@ -153,10 +158,11 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),  # Répertoire static global du projet
+    
 
     
 ]
-
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage',
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
